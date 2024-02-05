@@ -1,6 +1,9 @@
 import mongoose, { Connection } from "mongoose";
+import dotenv from "dotenv";
 
-const uri: string = "mongodb+srv://idoa:9XYqbPhV1MomxuaA@moveo.lpb0qiu.mongodb.net/?retryWrites=true&w=majority";
+dotenv.config();
+
+const uri: string = process.env.MONGODB_URI || "";
 
 let dbConnection: Connection;
 
