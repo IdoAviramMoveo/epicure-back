@@ -52,7 +52,17 @@ export const createRestaurant = async (req: Request, res: Response) => {
   }
 };
 
-export const updateRestaurant = async (req: Request, res: Response) => {};
+export const updateRestaurant = async (req: Request, res: Response) => {
+  try {
+    const updatedRestaurant = await Restaurant.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!updatedRestaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+    res.json(updatedRestaurant);
+  } catch (err) {
+    res.status(500).json({ message: "An unexpected error occurred" });
+  }
+};
 
 export const deleteRestaurant = async (req: Request, res: Response) => {
   try {

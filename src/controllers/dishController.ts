@@ -39,7 +39,17 @@ export const createDish = async (req: Request, res: Response) => {
   }
 };
 
-export const updateDish = async (req: Request, res: Response) => {};
+export const updateDish = async (req: Request, res: Response) => {
+  try {
+    const updatedDish = await Dish.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!updatedDish) {
+      return res.status(404).json({ message: "Dish not found" });
+    }
+    res.json(updatedDish);
+  } catch (err) {
+    res.status(500).json({ message: "An unexpected error occurred" });
+  }
+};
 
 export const deleteDish = async (req: Request, res: Response) => {
   try {
