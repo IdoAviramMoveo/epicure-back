@@ -11,6 +11,8 @@ dotenv.config();
 const app: express.Application = express();
 const port: number = parseInt(process.env.PORT as string, 10) || 3000;
 
+app.use(express.json());
+
 app.get("/", (req, res) => {
   res.send("Hello, World!");
 });
