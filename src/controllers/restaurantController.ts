@@ -5,7 +5,7 @@ import Chef from "../models/chef";
 
 export const getAllRestaurants = async (req: Request, res: Response) => {
   try {
-    const restaurants = await Restaurant.find();
+    const restaurants = await Restaurant.find().populate("chef", "title");
     res.json(restaurants);
   } catch (err) {
     res.status(500).json({ message: "An unexpected error occurred" });
