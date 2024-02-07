@@ -6,6 +6,7 @@ import { connectToDB } from "./db";
 import restaurantRoutes from "./routes/restaurantRoutes";
 import chefRoutes from "./routes/chefRoutes";
 import dishRoutes from "./routes/dishRoutes";
+import searchRoutes from "./routes/searchRoutes";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.get("/", (req, res) => {
 app.use("/restaurants", restaurantRoutes);
 app.use("/dishes", dishRoutes);
 app.use("/chefs", chefRoutes);
+app.use("/search", searchRoutes);
 
 connectToDB()
   .then(() => {
