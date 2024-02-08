@@ -12,6 +12,15 @@ export const getAllRestaurants = async (req: Request, res: Response) => {
   }
 };
 
+export const getAllPopularRestaurants = async (req: Request, res: Response) => {
+  try {
+    const popularRestaurants = await Restaurant.find({ isPopular: true }).populate("chef", "title");
+    res.json(popularRestaurants);
+  } catch (err) {
+    res.status(500).json({ message: "An unexpected error occurred" });
+  }
+};
+
 export const getRestaurantById = async (req: Request, res: Response) => {
   try {
     const restaurant = await Restaurant.findById(req.params.id);

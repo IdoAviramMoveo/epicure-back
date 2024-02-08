@@ -23,6 +23,18 @@ export const getChefById = async (req: Request, res: Response) => {
   }
 };
 
+export const getChefOfTheWeek = async (req: Request, res: Response) => {
+  try {
+    const chefOfTheWeek = await Chef.findOne({ isChefOfTheWeek: true }).populate("restaurants");
+    if (!chefOfTheWeek) {
+      return res.status(404).json({ message: "Chef of the week not found" });
+    }
+    res.json(chefOfTheWeek);
+  } catch (err) {
+    res.status(500).json({ message: "An unexpected error occurred" });
+  }
+};
+
 export const getChefWithRestaurants = async (req: Request, res: Response) => {
   try {
     const chefId = req.params.id;

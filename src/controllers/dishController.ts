@@ -12,6 +12,15 @@ export const getAllDishes = async (req: Request, res: Response) => {
   }
 };
 
+export const getAllSignatureDishes = async (req: Request, res: Response) => {
+  try {
+    const signatureDishes = await Dish.find({ isSignature: true });
+    res.json(signatureDishes);
+  } catch (err) {
+    res.status(500).json({ message: "An unexpected error occurred" });
+  }
+};
+
 export const getDishById = async (req: Request, res: Response) => {
   try {
     const dish = await Dish.findById(req.params.id);

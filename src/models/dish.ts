@@ -9,6 +9,7 @@ export interface IDish extends Document {
   tags: string[];
   price: number;
   restaurant: IRestaurant;
+  isSignature: boolean;
 }
 
 const DishSchema: Schema = new Schema({
@@ -18,6 +19,7 @@ const DishSchema: Schema = new Schema({
   tags: [{ type: String, required: true }],
   price: { type: Number, required: true },
   restaurant: { type: Schema.Types.ObjectId, ref: "Restaurant", required: true },
+  isSignature: { type: Boolean, required: true, default: false },
 });
 
 const Dish = mongoose.model<IDish>("Dish", DishSchema);

@@ -14,9 +14,7 @@ export const searchAll = async (req: Request, res: Response) => {
           index: "search-chefs",
           text: {
             query: searchTerm,
-            path: {
-              wildcard: "*",
-            },
+            path: "title",
           },
         },
       },
@@ -29,9 +27,7 @@ export const searchAll = async (req: Request, res: Response) => {
           index: "search-dishes",
           text: {
             query: searchTerm,
-            path: {
-              wildcard: "*",
-            },
+            path: "title",
           },
         },
       },
@@ -44,9 +40,7 @@ export const searchAll = async (req: Request, res: Response) => {
           index: "search-restaurants",
           text: {
             query: searchTerm,
-            path: {
-              wildcard: "*",
-            },
+            path: "title",
           },
         },
       },
