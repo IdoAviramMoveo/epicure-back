@@ -31,7 +31,6 @@ export const searchAll = async (req: Request, res: Response) => {
           },
         },
       },
-      { $project: { _id: 1, title: 1, image: 1 } },
     ]);
 
     const restaurantsPromise = Restaurant.aggregate([
@@ -44,7 +43,6 @@ export const searchAll = async (req: Request, res: Response) => {
           },
         },
       },
-      { $project: { _id: 1, title: 1, image: 1 } },
     ]);
 
     const [chefs, dishes, restaurants] = await Promise.all([chefsPromise, dishesPromise, restaurantsPromise]);
