@@ -21,6 +21,17 @@ export const getAllSignatureDishes = async (req: Request, res: Response) => {
   }
 };
 
+export const getDishesByIngredient = async (req: Request, res: Response) => {
+  try {
+    const { ingredient } = req.params;
+    const regex = new RegExp(ingredient, "i");
+    const dishesWithIngredient = await Dish.find({ ingredients: { $regex: regex } });
+    res.json(dishesWithIngredient);
+  } catch (err) {
+    res.status(500).json({ message: "An unexpected error occurred" });
+  }
+};
+
 export const getDishById = async (req: Request, res: Response) => {
   try {
     const dish = await Dish.findById(req.params.id);

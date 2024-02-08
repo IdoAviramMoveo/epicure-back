@@ -60,7 +60,15 @@ export const createChef = async (req: Request, res: Response) => {
 
 export const updateChef = async (req: Request, res: Response) => {
   try {
-    const updatedChef = await Chef.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const chefId = req.params.id;
+    const { newRestaurants, ...updateData } = req.body;
+    const update = {
+      ...updateData,
+      ...(newRestaurants ? { $push: { restaurants: { $each: newRestaurants } } } : {}),
+    };
+    const updatedChef = await Chef.findByIdAndUpdate(chefId, update, { new: true, useFindAndModify: false }).populate(
+      "restaurants"
+    );
     if (!updatedChef) {
       return res.status(404).json({ message: "Chef not found" });
     }
