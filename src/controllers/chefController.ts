@@ -4,7 +4,7 @@ import Chef from "../models/chef";
 
 export const getAllChefs = async (req: Request, res: Response) => {
   try {
-    const chefs = await Chef.find();
+    const chefs = await Chef.find().populate("restaurants");
     res.json(chefs);
   } catch (err) {
     res.status(500).json({ message: "An unexpected error occurred" });
@@ -31,6 +31,20 @@ export const getChefOfTheWeek = async (req: Request, res: Response) => {
     }
     res.json(chefOfTheWeek);
   } catch (err) {
+    res.status(500).json({ message: "An unexpected error occurred" });
+  }
+};
+
+export const setChefOfTheWeek = async (req: Request, res: Response) => {
+  const chefId = req.params.id;
+  try {
+    await Chef.updateMany({}, { $set: { isChefOfTheWeek: false } });
+    const updatedChef = await Chef.findByIdAndUpdate(chefId, { $set: { isChefOfTheWeek: true } }, { new: true });
+    if (!updatedChef) {
+      return res.status(404).json({ message: "Chef not found" });
+    }
+    res.status(200).json(updatedChef);
+  } catch (error) {
     res.status(500).json({ message: "An unexpected error occurred" });
   }
 };
@@ -66,9 +80,7 @@ export const updateChef = async (req: Request, res: Response) => {
       ...updateData,
       ...(newRestaurants ? { $push: { restaurants: { $each: newRestaurants } } } : {}),
     };
-    const updatedChef = await Chef.findByIdAndUpdate(chefId, update, { new: true, useFindAndModify: false }).populate(
-      "restaurants"
-    );
+    const updatedChef = await Chef.findByIdAndUpdate(chefId, update, { new: true, useFindAndModify: false }).populate("restaurants");
     if (!updatedChef) {
       return res.status(404).json({ message: "Chef not found" });
     }

@@ -12,11 +12,49 @@ export const getAllRestaurants = async (req: Request, res: Response) => {
   }
 };
 
+export const getAllRestaurantsWithDishes = async (req: Request, res: Response) => {
+  try {
+    const restaurantsWithDishesAndChef = await Restaurant.find().populate("dishes").populate({
+      path: "chef",
+      select: "title",
+    });
+    res.json(restaurantsWithDishesAndChef);
+  } catch (err) {
+    res.status(500).json({ message: "An unexpected error occurred", error: err });
+  }
+};
+
 export const getAllPopularRestaurants = async (req: Request, res: Response) => {
   try {
     const popularRestaurants = await Restaurant.find({ isPopular: true }).populate("chef", "title");
     res.json(popularRestaurants);
   } catch (err) {
+    res.status(500).json({ message: "An unexpected error occurred" });
+  }
+};
+
+export const setRestaurantAsPopular = async (req: Request, res: Response) => {
+  const restaurantId = req.params.id;
+  try {
+    const updatedRestaurant = await Restaurant.findByIdAndUpdate(restaurantId, { $set: { isPopular: true } }, { new: true });
+    if (!updatedRestaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+    res.status(200).json(updatedRestaurant);
+  } catch (error) {
+    res.status(500).json({ message: "An unexpected error occurred" });
+  }
+};
+
+export const unsetRestaurantAsPopular = async (req: Request, res: Response) => {
+  const restaurantId = req.params.id;
+  try {
+    const updatedRestaurant = await Restaurant.findByIdAndUpdate(restaurantId, { $set: { isPopular: false } }, { new: true });
+    if (!updatedRestaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+    res.status(200).json(updatedRestaurant);
+  } catch (error) {
     res.status(500).json({ message: "An unexpected error occurred" });
   }
 };
@@ -63,9 +101,19 @@ export const createRestaurant = async (req: Request, res: Response) => {
 
 export const updateRestaurant = async (req: Request, res: Response) => {
   try {
-    const updatedRestaurant = await Restaurant.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!updatedRestaurant) {
+    const currentRestaurant = await Restaurant.findById(req.params.id);
+    if (!currentRestaurant) {
       return res.status(404).json({ message: "Restaurant not found" });
+    }
+    const currentChefId = currentRestaurant.chef;
+    const newChefId = req.body.chef;
+    if (!currentChefId.equals(newChefId)) {
+      await Chef.findByIdAndUpdate(currentChefId, { $pull: { restaurants: currentRestaurant._id } });
+      await Chef.findByIdAndUpdate(newChefId, { $addToSet: { restaurants: currentRestaurant._id } });
+    }
+    const updatedRestaurant = await Restaurant.findByIdAndUpdate(req.params.id, req.body, { new: true }).populate("chef", "title");
+    if (!updatedRestaurant) {
+      return res.status(404).json({ message: "Unable to update restaurant" });
     }
     res.json(updatedRestaurant);
   } catch (err) {

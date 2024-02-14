@@ -12,7 +12,7 @@ export const searchAll = async (req: Request, res: Response) => {
       {
         $search: {
           index: "search-chefs",
-          text: {
+          autocomplete: {
             query: searchTerm,
             path: "title",
           },
@@ -25,7 +25,7 @@ export const searchAll = async (req: Request, res: Response) => {
       {
         $search: {
           index: "search-dishes",
-          text: {
+          autocomplete: {
             query: searchTerm,
             path: "title",
           },
@@ -37,7 +37,7 @@ export const searchAll = async (req: Request, res: Response) => {
       {
         $search: {
           index: "search-restaurants",
-          text: {
+          autocomplete: {
             query: searchTerm,
             path: "title",
           },

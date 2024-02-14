@@ -5,7 +5,10 @@ import Restaurant from "../models/restaurant";
 
 export const getAllDishes = async (req: Request, res: Response) => {
   try {
-    const dishes = await Dish.find();
+    const dishes = await Dish.find().populate({
+      path: "restaurant",
+      select: "title",
+    });
     res.json(dishes);
   } catch (err) {
     res.status(500).json({ message: "An unexpected error occurred" });
@@ -17,6 +20,32 @@ export const getAllSignatureDishes = async (req: Request, res: Response) => {
     const signatureDishes = await Dish.find({ isSignature: true });
     res.json(signatureDishes);
   } catch (err) {
+    res.status(500).json({ message: "An unexpected error occurred" });
+  }
+};
+
+export const setDishAsSignature = async (req: Request, res: Response) => {
+  const dishId = req.params.id;
+  try {
+    const updatedDish = await Dish.findByIdAndUpdate(dishId, { $set: { isSignature: true } }, { new: true });
+    if (!updatedDish) {
+      return res.status(404).json({ message: "Dish not found" });
+    }
+    res.status(200).json(updatedDish);
+  } catch (error) {
+    res.status(500).json({ message: "An unexpected error occurred" });
+  }
+};
+
+export const unsetDishAsSignature = async (req: Request, res: Response) => {
+  const dishId = req.params.id;
+  try {
+    const updatedDish = await Dish.findByIdAndUpdate(dishId, { $set: { isSignature: false } }, { new: true });
+    if (!updatedDish) {
+      return res.status(404).json({ message: "Dish not found" });
+    }
+    res.status(200).json(updatedDish);
+  } catch (error) {
     res.status(500).json({ message: "An unexpected error occurred" });
   }
 };
@@ -46,13 +75,10 @@ export const getDishById = async (req: Request, res: Response) => {
 
 export const createDish = async (req: Request, res: Response) => {
   try {
+    console.log(req.body);
     const newDish = new Dish(req.body);
     const savedDish = await newDish.save();
-    await Restaurant.findByIdAndUpdate(
-      savedDish.restaurant,
-      { $push: { dishes: savedDish._id } },
-      { new: true, useFindAndModify: false }
-    );
+    await Restaurant.findByIdAndUpdate(savedDish.restaurant, { $push: { dishes: savedDish._id } }, { new: true, useFindAndModify: false });
     res.status(201).json(savedDish);
   } catch (err) {
     res.status(500).json({ message: "An unexpected error occurred" });
@@ -61,10 +87,24 @@ export const createDish = async (req: Request, res: Response) => {
 
 export const updateDish = async (req: Request, res: Response) => {
   try {
-    const updatedDish = await Dish.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!updatedDish) {
+    const currentDish = await Dish.findById(req.params.id);
+    if (!currentDish) {
       return res.status(404).json({ message: "Dish not found" });
     }
+
+    const currentRestaurantId = currentDish.restaurant;
+    const newRestaurantId = req.body.restaurant;
+
+    if (!currentRestaurantId.equals(newRestaurantId)) {
+      await Restaurant.findByIdAndUpdate(currentRestaurantId, { $pull: { dishes: currentDish._id } });
+      await Restaurant.findByIdAndUpdate(newRestaurantId, { $addToSet: { dishes: currentDish._id } });
+    }
+
+    const updatedDish = await Dish.findByIdAndUpdate(req.params.id, req.body, { new: true }).populate("restaurant");
+    if (!updatedDish) {
+      return res.status(404).json({ message: "Unable to update dish" });
+    }
+
     res.json(updatedDish);
   } catch (err) {
     res.status(500).json({ message: "An unexpected error occurred" });
@@ -79,11 +119,7 @@ export const deleteDish = async (req: Request, res: Response) => {
     }
     const deletedDish = await Dish.findByIdAndDelete(req.params.id);
     if (deletedDish) {
-      await Restaurant.findByIdAndUpdate(
-        deletedDish.restaurant,
-        { $pull: { dishes: deletedDish._id } },
-        { useFindAndModify: false }
-      );
+      await Restaurant.findByIdAndUpdate(deletedDish.restaurant, { $pull: { dishes: deletedDish._id } }, { useFindAndModify: false });
     }
   } catch (err) {
     res.status(500).json({ message: "An unexpected error occurred" });
