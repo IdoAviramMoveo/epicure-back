@@ -16,7 +16,7 @@ const DishSchema: Schema = new Schema({
   title: { type: String, required: true },
   image: { type: String, required: true },
   ingredients: [{ type: String, required: true }],
-  tags: [{ type: String, required: true }],
+  tags: [{ type: String, required: false }],
   price: { type: Number, required: true },
   restaurant: { type: Schema.Types.ObjectId, ref: "Restaurant", required: true },
   isSignature: { type: Boolean, required: true, default: false },
