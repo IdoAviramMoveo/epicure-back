@@ -7,6 +7,7 @@ import restaurantRoutes from "./routes/restaurantRoutes";
 import chefRoutes from "./routes/chefRoutes";
 import dishRoutes from "./routes/dishRoutes";
 import searchRoutes from "./routes/searchRoutes";
+import userRoutes from "./routes/userRoutes";
 
 dotenv.config();
 
@@ -17,13 +18,14 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("Hello, World!");
+  res.send("Epicure API is running");
 });
 
 app.use("/restaurants", restaurantRoutes);
 app.use("/dishes", dishRoutes);
 app.use("/chefs", chefRoutes);
 app.use("/search", searchRoutes);
+app.use("/users", userRoutes);
 
 connectToDB()
   .then(() => {
