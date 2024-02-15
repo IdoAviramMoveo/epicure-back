@@ -50,7 +50,7 @@ export const userLogin = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET || "your_jwt_secret", { expiresIn: "1m" });
+    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET || "your_jwt_secret", { expiresIn: "3h" });
 
     res.json({ message: "Login successful", token });
   } catch (error) {
@@ -76,7 +76,7 @@ export const adminLogin = async (req: Request, res: Response) => {
       return res.status(403).json({ message: "Access denied. Only admins can log in here." });
     }
 
-    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET || "your_jwt_secret", { expiresIn: "1m" });
+    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET || "your_jwt_secret", { expiresIn: "3h" });
 
     res.json({ message: "Admin login successful", token });
   } catch (error) {
