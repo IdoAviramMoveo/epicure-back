@@ -99,3 +99,15 @@ export const verifyToken = async (req: Request, res: Response) => {
     res.json({ valid: true });
   });
 };
+
+export const deleteUser = async (req: Request, res: Response) => {
+  try {
+    const deletedUser = await User.findByIdAndDelete(req.params.id);
+    if (!deletedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ message: "An unexpected error occurred" });
+  }
+};

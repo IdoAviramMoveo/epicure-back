@@ -6,10 +6,8 @@ interface AuthenticatedRequest extends Request {
 }
 
 export const authenticateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  console.log("authenticateToken middleware called");
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
-  console.log("Token received:", token);
 
   if (token == null) {
     return res.sendStatus(401);
