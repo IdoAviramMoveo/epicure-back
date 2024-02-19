@@ -75,7 +75,6 @@ export const getDishById = async (req: Request, res: Response) => {
 
 export const createDish = async (req: Request, res: Response) => {
   try {
-    console.log(req.body);
     const newDish = new Dish(req.body);
     const savedDish = await newDish.save();
     await Restaurant.findByIdAndUpdate(savedDish.restaurant, { $push: { dishes: savedDish._id } }, { new: true, useFindAndModify: false });
