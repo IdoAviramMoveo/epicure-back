@@ -120,6 +120,7 @@ export const deleteDish = async (req: Request, res: Response) => {
     const deletedDish = await Dish.findByIdAndDelete(req.params.id);
     if (deletedDish) {
       await Restaurant.findByIdAndUpdate(deletedDish.restaurant, { $pull: { dishes: deletedDish._id } }, { useFindAndModify: false });
+      res.status(204).send();
     }
   } catch (err) {
     res.status(500).json({ message: "An unexpected error occurred" });
