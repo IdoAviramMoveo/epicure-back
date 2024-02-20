@@ -12,7 +12,7 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
   jwt.verify(token, process.env.JWT_SECRET || "your_jwt_secret", (err: any) => {
     if (err) {
       console.log("Token verification error:", err);
-      return res.sendStatus(403);
+      return res.sendStatus(401);
     }
     next();
   });

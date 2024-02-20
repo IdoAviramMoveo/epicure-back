@@ -20,6 +20,7 @@ app.get("/", (req, res) => {
 
 app.use("/api", apiRouter);
 app.use("/admin", adminRouter);
+app.use("/api-docs", express.static("apidoc"));
 
 connectToDB()
   .then(() => {
