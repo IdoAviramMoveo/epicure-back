@@ -27,6 +27,26 @@ const router = Router();
 router.get("/", authenticateToken, userController.getAllUsers);
 
 /**
+ * @api {post} /admin/users/create-admin Create Admin
+ * @apiName createAdmin
+ * @apiGroup UserAdmin
+ * @apiVersion 1.0.0
+ * @apiDescription Creates a new admin in the system.
+ *
+ * @apiBody {String} name User's first name.
+ * @apiBody {String} surname User's last name.
+ * @apiBody {String} email User's email address.
+ * @apiBody {String} password User's password.
+ *
+ * @apiSuccess {String} message Confirmation message.
+ * @apiSuccess {Object} user User object (without password).
+ *
+ * @apiError (400 Bad Request) BadRequest Invalid or missing fields.
+ * @apiError (500 Internal Server Error) ServerError The server encountered an unexpected condition.
+ */
+router.post("/create-admin", userController.createAdmin);
+
+/**
  * @api {get} /admin/verify-token Verify Admin Token
  * @apiName VerifyToken
  * @apiGroup UserAdmin

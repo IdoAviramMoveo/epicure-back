@@ -4,7 +4,7 @@ import * as userController from "../../../controllers/userController";
 const router = Router();
 
 /**
- * @api {post} /api/users/create Create User
+ * @api {post} /api/users/create-user Create User
  * @apiName CreateUser
  * @apiGroup User
  * @apiVersion 1.0.0
@@ -14,7 +14,6 @@ const router = Router();
  * @apiBody {String} surname User's last name.
  * @apiBody {String} email User's email address.
  * @apiBody {String} password User's password.
- * @apiBody {String="USER","ADMIN"} role User's role in the system.
  *
  * @apiSuccess {String} message Confirmation message.
  * @apiSuccess {Object} user User object (without password).
@@ -22,7 +21,7 @@ const router = Router();
  * @apiError (400 Bad Request) BadRequest Invalid or missing fields.
  * @apiError (500 Internal Server Error) ServerError The server encountered an unexpected condition.
  */
-router.post("/create", userController.createUser);
+router.post("/create-user", userController.createUser);
 
 /**
  * @api {post} /api/users/login User Login

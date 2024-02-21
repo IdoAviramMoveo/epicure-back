@@ -15,7 +15,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const { name, surname, email, password, role } = req.body;
+    const { name, surname, email, password } = req.body;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -24,7 +24,7 @@ export const createUser = async (req: Request, res: Response) => {
       surname,
       email,
       password: hashedPassword,
-      role,
+      role: "USER",
     });
 
     await user.save();
@@ -32,6 +32,28 @@ export const createUser = async (req: Request, res: Response) => {
     res.status(201).json({ message: "User created successfully", user });
   } catch (error) {
     res.status(500).json({ message: "Error creating user", error });
+  }
+};
+
+export const createAdmin = async (req: Request, res: Response) => {
+  try {
+    const { name, surname, email, password } = req.body;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const admin = new User({
+      name,
+      surname,
+      email,
+      password: hashedPassword,
+      role: "ADMIN",
+    });
+
+    await admin.save();
+
+    res.status(201).json({ message: "Admin created successfully", admin });
+  } catch (error) {
+    res.status(500).json({ message: "Error creating admin", error });
   }
 };
 

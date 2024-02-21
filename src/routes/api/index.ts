@@ -11,6 +11,6 @@ apiRouter.use("/chefs", chefApiRoutes);
 apiRouter.use("/dishes", dishApiRoutes);
 apiRouter.use("/restaurants", restaurantApiRoutes);
 apiRouter.use("/search", searchApiRoutes);
-apiRouter.use("/user", userApiRoutes);
+apiRouter.use("/users", userApiRoutes);
 
 export default apiRouter;
