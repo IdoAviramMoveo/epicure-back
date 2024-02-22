@@ -3,10 +3,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 import { connectToDB } from "./db";
-import restaurantRoutes from "./routes/restaurantRoutes";
-import chefRoutes from "./routes/chefRoutes";
-import dishRoutes from "./routes/dishRoutes";
-import searchRoutes from "./routes/searchRoutes";
+import apiRouter from "./routes/api/index";
+import adminRouter from "./routes/admin/index";
 
 dotenv.config();
 
@@ -17,13 +15,12 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("Hello, World!");
+  res.send("Epicure API is running");
 });
 
-app.use("/restaurants", restaurantRoutes);
-app.use("/dishes", dishRoutes);
-app.use("/chefs", chefRoutes);
-app.use("/search", searchRoutes);
+app.use("/api", apiRouter);
+app.use("/admin", adminRouter);
+app.use("/api-docs", express.static("apidoc"));
 
 connectToDB()
   .then(() => {
