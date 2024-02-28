@@ -1,12 +1,35 @@
 import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
 
-const app = express();
-const port = 3000;
+import { connectToDB } from "./db";
+import apiRouter from "./routes/api/index";
+import adminRouter from "./routes/admin/index";
+
+dotenv.config();
+
+const app: express.Application = express();
+const port: number = parseInt(process.env.PORT as string, 10) || 3000;
+
+app.use(cors());
+app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("Hello, World!");
+  res.send("Epicure API is running");
 });
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+app.use("/api", apiRouter);
+app.use("/admin", adminRouter);
+app.use("/api-docs", express.static("apidoc"));
+
+connectToDB()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+    });
+  })
+  .catch((error) => {
+    console.error("Failed to connect to the database", error);
+  });
+
+export default app;
