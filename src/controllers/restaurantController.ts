@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 
 import Restaurant from "../models/restaurant";
 import Chef from "../models/chef";
+import Dish from "../models/dish";
 
 export const getAllRestaurants = async (req: Request, res: Response) => {
   try {
@@ -123,18 +124,18 @@ export const updateRestaurant = async (req: Request, res: Response) => {
 
 export const deleteRestaurant = async (req: Request, res: Response) => {
   try {
-    const restaurant = await Restaurant.findById(req.params.id);
+    const restaurantId = req.params.id;
+    const restaurant = await Restaurant.findById(restaurantId);
     if (!restaurant) {
       return res.status(404).json({ message: "Restaurant not found" });
     }
-    const deletedRestaurant = await Restaurant.findByIdAndDelete(req.params.id);
-    if (deletedRestaurant) {
-      await Chef.findByIdAndUpdate(
-        deletedRestaurant.chef,
-        { $pull: { restaurants: deletedRestaurant._id } },
-        { new: true, useFindAndModify: false }
-      );
-    }
+
+    await Dish.deleteMany({ restaurant: restaurantId });
+
+    await Chef.findByIdAndUpdate(restaurant.chef, { $pull: { restaurants: restaurantId } }, { new: true, useFindAndModify: false });
+
+    await Restaurant.findByIdAndDelete(restaurantId);
+
     res.status(204).send();
   } catch (err) {
     res.status(500).json({ message: "An unexpected error occurred", error: err });

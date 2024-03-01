@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 
 import Chef from "../models/chef";
+import Restaurant from "../models/restaurant";
+import Dish from "../models/dish";
 
 export const getAllChefs = async (req: Request, res: Response) => {
   try {
@@ -92,12 +94,22 @@ export const updateChef = async (req: Request, res: Response) => {
 
 export const deleteChef = async (req: Request, res: Response) => {
   try {
-    const deletedChef = await Chef.findByIdAndDelete(req.params.id);
-    if (!deletedChef) {
+    const chefId = req.params.id;
+    const chef = await Chef.findById(chefId);
+    if (!chef) {
       return res.status(404).json({ message: "Chef not found" });
     }
+
+    const restaurants = await Restaurant.find({ chef: chefId });
+    for (const restaurant of restaurants) {
+      await Dish.deleteMany({ restaurant: restaurant._id });
+      await Restaurant.findByIdAndDelete(restaurant._id);
+    }
+
+    await Chef.findByIdAndDelete(chefId);
+
     res.status(204).send();
   } catch (err) {
-    res.status(500).json({ message: "An unexpected error occurred" });
+    res.status(500).json({ message: "An unexpected error occurred", error: err });
   }
 };
