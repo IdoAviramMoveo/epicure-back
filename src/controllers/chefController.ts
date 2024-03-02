@@ -106,6 +106,14 @@ export const deleteChef = async (req: Request, res: Response) => {
       await Restaurant.findByIdAndDelete(restaurant._id);
     }
 
+    if (chef.isChefOfTheWeek) {
+      const newChefOfTheWeek = await Chef.findOne({ _id: { $ne: chefId }, isChefOfTheWeek: false });
+      if (newChefOfTheWeek) {
+        newChefOfTheWeek.isChefOfTheWeek = true;
+        await newChefOfTheWeek.save();
+      }
+    }
+
     await Chef.findByIdAndDelete(chefId);
 
     res.status(204).send();
